@@ -1,5 +1,34 @@
 <?php 
+    // use PHPMailer\PHPMailer\PHPMailer;
+    // use PHPMailer\PHPMailer\STMP;
+    // use PHPMailer\PHPMailer\Exception;
+
+    // require 'vendor/autoload.php';
     require_once("database.php");
+
+    // $mail = new PHPMailer(true);
+
+    if(isset($_POST['forgot'])){
+        $password = $_POST["resetPassword"];
+        $confirmPassword = $_POST["confirmPassword"];
+
+        if($password == $confirmPassword){
+            $id = $db->id;
+            $sql = "UPDATE users SET password='$confirmPassword' WHERE id='$id'";
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            $row = mysqli_fetch_array($sql);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($result){
+                echo "<script>alert('successfully reset password!')</script>";
+                header("Location: index.php");
+            }else{
+                echo "<script>alert('failed reset password!')</script>";
+            }
+        }else{
+            echo "<script>alert('Not Same')</script>";
+        }
+    }
 ?> 
 <!doctype html>
 <html lang="en">
@@ -21,7 +50,7 @@
     <div class="container">
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-md-6">
-                <img src="assets/75988-forgot-password.gif" class="img-fluid" alt="">
+                <img src="assets/gaming2.gif" class="img-fluid" alt="">
             </div>
             <div class="col-md-6">
                 <form action="" method="POST">
@@ -29,19 +58,24 @@
                         <h5>Forgot Password</h5>
                     </div>
                     <div class="mb-3">
-                        <label for="" class="form-label">Verify Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        <label for="" class="form-label">Reset Password</label>
+                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                        <input type="password" class="form-control" name="resetPassword" placeholder="Reset Password" required>
                     </div>
                     <div class="mb-3">
+                        <label for="" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" required>
+                    </div>
+                    <!-- <div class="mb-3">
                         <div class="row">
                             <div class="col-md-6 d-flex justify-content-start">
                                 <a class="text-decoration-none" href="index.php">Back To Login?</a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="mb-3 ">
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" name="forgotPassword" type="submit">Login</button>
+                            <button class="btn btn-primary" name="forgot" type="submit">Forgot Password</button>
                         </div>
                     </div>
                 </form>
